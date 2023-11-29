@@ -6,6 +6,7 @@ const app = express();
 const notFound = require("./middlewares/errors/notFoundHandler");
 const errorHandler = require("./middlewares/errors/errorHandler");
 const userRoutes = require("./api/Auth/routes");
+const reminderRoutes = require("./api/Reminder/routes");
 const config = require("./config/keys");
 const passport = require("passport");
 const path = require("path");
@@ -25,7 +26,8 @@ passport.use(jwtStrategy);
 
 app.use("/media", express.static(path.join(__dirname, "media")));
 
-app.use("/auth", userRoutes);
+app.use("/api/auth", userRoutes);
+app.use("/api/reminder", reminderRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
