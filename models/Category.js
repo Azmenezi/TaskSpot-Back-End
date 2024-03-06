@@ -1,7 +1,8 @@
 const { model, Schema } = require("mongoose");
 
 const CategorySchema = new Schema({
-  type: { type: String, unique: true, required: true },
+  name: { type: String, required: true },
+  icon: { type: String, required: true },
   places: [{ type: Schema.Types.ObjectId, ref: "Place" }],
 });
 

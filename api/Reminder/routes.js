@@ -5,6 +5,7 @@ const {
   fetchReminder,
   updateReminder,
   deleteReminder,
+  createBulkReminders,
 } = require("./controllers");
 const router = express.Router();
 const passport = require("passport");
@@ -23,9 +24,14 @@ router.param("reminderId", async (req, res, next, reminderId) => {
 
 router.get("/", getReminders);
 router.post(
-  "/create",
+  "/create/:categoryId",
   passport.authenticate("jwt", { session: false }),
   createReminder
+);
+router.post(
+  "/bulk-create/",
+  passport.authenticate("jwt", { session: false }),
+  createBulkReminders
 );
 router.put(
   "/update/:reminderId",

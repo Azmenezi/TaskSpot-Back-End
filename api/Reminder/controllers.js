@@ -1,6 +1,6 @@
+const Category = require("../../models/Category");
 const Reminder = require("../../models/Reminder");
 const User = require("../../models/User");
-const generateToken = require("../../utils/auth/generateToken");
 
 exports.fetchReminder = async (reminderId, next) => {
   try {
@@ -22,9 +22,23 @@ exports.getReminders = async (req, res, next) => {
 
 exports.createReminder = async (req, res, next) => {
   try {
-    const newReminder = await Reminder.create(req.body);
-    const token = generateToken(newReminder);
-    res.status(201).json({ token });
+    const { categoryId } = req.params;
+    const category = await Category.findById(categoryId);
+    if (!category)
+      return res.status(404).json({ message: "category not found!" });
+    const newReminder = await Reminder.create({
+      ...req.body,
+      category: category._id,
+    });
+    res.status(201).json({ newReminder });
+  } catch (error) {
+    return next(error);
+  }
+};
+exports.createBulkReminders = async (req, res, next) => {
+  try {
+    const newReminders = await Reminder.insertMany(req.body);
+    res.status(201).json(newReminders);
   } catch (error) {
     return next(error);
   }

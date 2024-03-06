@@ -7,6 +7,8 @@ const notFound = require("./middlewares/errors/notFoundHandler");
 const errorHandler = require("./middlewares/errors/errorHandler");
 const userRoutes = require("./api/Auth/routes");
 const reminderRoutes = require("./api/Reminder/routes");
+const categoryRoutes = require("./api/Category/routes");
+const placeRoutes = require("./api/Place/routes");
 const config = require("./config/keys");
 const passport = require("passport");
 const path = require("path");
@@ -28,6 +30,8 @@ app.use("/media", express.static(path.join(__dirname, "media")));
 
 app.use("/api/auth", userRoutes);
 app.use("/api/reminder", reminderRoutes);
+app.use("/api/category", categoryRoutes);
+app.use("/api/place", placeRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
