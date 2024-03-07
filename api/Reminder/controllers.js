@@ -13,7 +13,20 @@ exports.fetchReminder = async (reminderId, next) => {
 
 exports.getReminders = async (req, res, next) => {
   try {
-    const reminders = await Reminder.find().select("-__v");
+    const reminders = await Reminder.find({ from: req.user._id }).select(
+      "-__v"
+    );
+    return res.status(200).json(reminders);
+  } catch (error) {
+    return next(error);
+  }
+};
+exports.getRecentReminders = async (req, res, next) => {
+  try {
+    const reminders = await Reminder.find({ from: req.user._id })
+      .sort("-createdAt")
+      .select("-__v")
+      .limit(5);
     return res.status(200).json(reminders);
   } catch (error) {
     return next(error);
@@ -37,7 +50,14 @@ exports.createReminder = async (req, res, next) => {
 };
 exports.createBulkReminders = async (req, res, next) => {
   try {
-    const newReminders = await Reminder.insertMany(req.body);
+    console.log(req.body);
+    const tasks = req.body.map((task) => ({
+      text: task.text,
+      category: task.category,
+      amount: task.amount || 1,
+      from: req.user._id,
+    }));
+    const newReminders = await Reminder.insertMany(tasks);
     res.status(201).json(newReminders);
   } catch (error) {
     return next(error);

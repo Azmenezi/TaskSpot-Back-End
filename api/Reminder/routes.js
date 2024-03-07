@@ -6,6 +6,7 @@ const {
   updateReminder,
   deleteReminder,
   createBulkReminders,
+  getRecentReminders,
 } = require("./controllers");
 const router = express.Router();
 const passport = require("passport");
@@ -22,7 +23,12 @@ router.param("reminderId", async (req, res, next, reminderId) => {
   }
 });
 
-router.get("/", getReminders);
+router.get("/", passport.authenticate("jwt", { session: false }), getReminders);
+router.get(
+  "/recent",
+  passport.authenticate("jwt", { session: false }),
+  getRecentReminders
+);
 router.post(
   "/create/:categoryId",
   passport.authenticate("jwt", { session: false }),
