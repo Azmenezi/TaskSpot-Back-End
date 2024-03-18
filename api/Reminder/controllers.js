@@ -43,6 +43,9 @@ exports.createReminder = async (req, res, next) => {
       ...req.body,
       category: category._id,
     });
+    await User.findByIdAndUpdate(req.user._id, {
+      $push: { reminders: newReminder._id },
+    });
     res.status(201).json({ newReminder });
   } catch (error) {
     return next(error);
@@ -58,6 +61,9 @@ exports.createBulkReminders = async (req, res, next) => {
       from: req.user._id,
     }));
     const newReminders = await Reminder.insertMany(tasks);
+    await User.findByIdAndUpdate(req.user._id, {
+      $push: { reminders: { $each: newReminders.map((t) => t._id) } },
+    });
     res.status(201).json(newReminders);
   } catch (error) {
     return next(error);

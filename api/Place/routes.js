@@ -23,7 +23,7 @@ router.param("placeId", async (req, res, next, placeId) => {
 
 router.get("/", getPlaces);
 
-router.get(
+router.put(
   "/nearby",
   passport.authenticate("jwt", { session: false }),
   getNearbyPlaces

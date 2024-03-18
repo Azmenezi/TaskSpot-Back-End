@@ -56,13 +56,15 @@ exports.deletePlace = async (req, res, next) => {
 
 exports.getNearbyPlaces = async (req, res, next) => {
   try {
-    const radius = 500;
+    console.log(req.body);
+    const { userLocation, userRadius } = req.body;
+    const radius = userRadius || 1000;
     const nearbyPlaces = await Place.find({
       location: {
         $near: {
           $geometry: {
             type: "Point",
-            coordinates: req.user.location.coordinates, // Longitude first, Latitude second
+            coordinates: userLocation, // Longitude first, Latitude second
           },
           $maxDistance: radius,
           $minDistance: 0,

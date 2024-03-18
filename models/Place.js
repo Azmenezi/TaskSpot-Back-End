@@ -17,4 +17,6 @@ const PlaceSchema = new Schema({
   },
 });
 
+PlaceSchema.index({ location: "2dsphere" });
+
 module.exports = model("Place", PlaceSchema);
