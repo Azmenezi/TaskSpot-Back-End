@@ -13,10 +13,28 @@ exports.fetchReminder = async (reminderId, next) => {
 
 exports.getReminders = async (req, res, next) => {
   try {
-    const reminders = await Reminder.find({ from: req.user._id }).select(
-      "-__v"
-    );
+    const reminders = await Reminder.find({ from: req.user._id })
+      .sort("-createdAt")
+      .select("-__v");
     return res.status(200).json(reminders);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+exports.getReminderByCategory = async (req, res, next) => {
+  try {
+    const reminders = await Reminder.find({ from: req.user._id })
+      .sort("-createdAt")
+      .select("-__v")
+      .populate("category");
+    return res
+      .status(200)
+      .json(
+        reminders.filter(
+          (reminder) => reminder.category.name === req.params.category
+        )
+      );
   } catch (error) {
     return next(error);
   }
@@ -82,6 +100,41 @@ exports.updateReminder = async (req, res, next) => {
 exports.deleteReminder = async (req, res, next) => {
   try {
     await Reminder.findByIdAndRemove({ _id: req.user.id });
+    return res.status(204).end();
+  } catch (error) {
+    return next(error);
+  }
+};
+exports.bulkDeleteReminders = async (req, res, next) => {
+  try {
+    const { reminderIds } = req.body;
+    await Reminder.deleteMany({ _id: { $in: reminderIds } });
+    return res.status(204).end();
+  } catch (error) {
+    return next(error);
+  }
+};
+
+exports.markRemindersAsDone = async (req, res, next) => {
+  try {
+    const { reminderIds } = req.body;
+    await Reminder.updateMany(
+      { _id: { $in: reminderIds } },
+      { $set: { done: true } }
+    );
+    return res.status(204).end();
+  } catch (error) {
+    return next(error);
+  }
+};
+
+exports.markUnDoneReminders = async (req, res, next) => {
+  try {
+    const { reminderIds } = req.body;
+    await Reminder.updateMany(
+      { _id: { $in: reminderIds } },
+      { $set: { done: false } }
+    );
     return res.status(204).end();
   } catch (error) {
     return next(error);

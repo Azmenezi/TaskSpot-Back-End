@@ -7,6 +7,10 @@ const {
   deleteReminder,
   createBulkReminders,
   getRecentReminders,
+  getReminderByCategory,
+  markRemindersAsDone,
+  bulkDeleteReminders,
+  markUnDoneReminders,
 } = require("./controllers");
 const router = express.Router();
 const passport = require("passport");
@@ -25,9 +29,24 @@ router.param("reminderId", async (req, res, next, reminderId) => {
 
 router.get("/", passport.authenticate("jwt", { session: false }), getReminders);
 router.get(
+  "/by-category/:category",
+  passport.authenticate("jwt", { session: false }),
+  getReminderByCategory
+);
+router.get(
   "/recent",
   passport.authenticate("jwt", { session: false }),
   getRecentReminders
+);
+router.patch(
+  "/done",
+  passport.authenticate("jwt", { session: false }),
+  markRemindersAsDone
+);
+router.patch(
+  "/undone",
+  passport.authenticate("jwt", { session: false }),
+  markUnDoneReminders
 );
 router.post(
   "/create/:categoryId",
@@ -45,8 +64,13 @@ router.put(
   updateReminder
 );
 router.delete(
-  "/:reminderId",
+  "/delete/:reminderId",
   passport.authenticate("jwt", { session: false }),
   deleteReminder
+);
+router.put(
+  "/bulkDelete",
+  passport.authenticate("jwt", { session: false }),
+  bulkDeleteReminders
 );
 module.exports = router;
