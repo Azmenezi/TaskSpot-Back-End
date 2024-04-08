@@ -15,7 +15,8 @@ exports.getReminders = async (req, res, next) => {
   try {
     const reminders = await Reminder.find({ from: req.user._id })
       .sort("-createdAt")
-      .select("-__v");
+      .select("-__v")
+      .populate("category");
     return res.status(200).json(reminders);
   } catch (error) {
     return next(error);
