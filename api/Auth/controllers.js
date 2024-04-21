@@ -76,19 +76,15 @@ function vowelToNumber(username) {
 exports.checkUsername = async (req, res, next) => {
   try {
     const { username } = req.body;
-
     const user = await User.findOne({ username });
-
     if (user) {
       let suggestions = [];
       let attempts = 0;
       while (suggestions.length < 5 && attempts < 50) {
-        // Add an attempt counter
-        attempts++; // Increment attempts counter
+        attempts++;
         let newUsername = "";
-        const randomAdj = getRandomWord(5); // Get a random word of length 5
+        const randomAdj = getRandomWord(5);
         const randomNumber = Math.floor(Math.random() * 100);
-
         switch (suggestions.length) {
           case 0:
             newUsername = username + randomNumber;
@@ -108,13 +104,11 @@ exports.checkUsername = async (req, res, next) => {
           default:
             break;
         }
-
         let userExists = await User.findOne({ username: newUsername });
         if (!userExists) {
           suggestions.push(newUsername);
         }
       }
-
       return res
         .status(200)
         .json({ message: "Username is taken", suggestions });

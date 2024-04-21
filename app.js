@@ -11,7 +11,6 @@ const categoryRoutes = require("./api/Category/routes");
 const placeRoutes = require("./api/Place/routes");
 const config = require("./config/keys");
 const passport = require("passport");
-const path = require("path");
 const {
   localStrategy,
   jwtStrategy,
@@ -25,8 +24,6 @@ app.use(morgan("dev"));
 app.use(passport.initialize());
 passport.use("local", localStrategy);
 passport.use(jwtStrategy);
-
-app.use("/media", express.static(path.join(__dirname, "media")));
 
 app.use("/api/auth", userRoutes);
 app.use("/api/reminder", reminderRoutes);
